@@ -1,253 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PROYASS — Mobile Games Studio | BLIXO & World Puzzle</title>
-<meta name="description" content="PROYASS — studio indépendant de jeux mobiles. BLIXO Block Puzzle & World Puzzle Daily Crossword. Disponibles sur Google Play.">
+<meta name="description" content="PROYASS — indie mobile games studio. BLIXO Block Puzzle & World Puzzle Daily Crossword. Free on Google Play.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#07070f; --bg2:#0d0d1d;
-  --lime:#c8ff2e; --cyan:#3ee6ff; --pink:#ff4ecd; --orange:#ff9a3d;
-  --txt:#f4f2ff; --mut:#a7a3c7;
-  --card:rgba(255,255,255,.045); --stroke:rgba(255,255,255,.1);
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--txt);font-family:'Space Grotesk',sans-serif;overflow-x:hidden}
+:root{--bg:#07070f;--lime:#c8ff2e;--cyan:#3ee6ff;--pink:#ff4ecd;--txt:#f4f2ff;--mut:#a7a3c7;--stroke:rgba(255,255,255,.1)}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'Space Grotesk',sans-serif;overflow-x:hidden;cursor:none}
+@media(pointer:coarse){body{cursor:auto}#cursor,#glow{ display:none}}
 ::selection{background:var(--lime);color:#000}
-#bg-canvas{position:fixed;inset:0;z-index:0;opacity:.9}
-.noise{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.06;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+#bg-canvas{position:fixed;inset:0;z-index:0}
+.aurora{position:fixed;border-radius:50%;filter:blur(120px);opacity:.35;z-index:0;pointer-events:none;animation:drift 14s ease-in-out infinite alternate}
+.a1{width:600px;height:600px;background:#3ee6ff33;top:-150px;left:-150px}
+.a2{width:550px;height:550px;background:#ff4ecd2e;bottom:-100px;right:-120px;animation-delay:-5s}
+.a3{width:400px;height:400px;background:#c8ff2e22;top:40%;left:55%;animation-delay:-9s}
+@keyframes drift{to{transform:translate(80px,60px) scale(1.15)}}
+.noise{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+#progress{position:fixed;top:0;left:0;height:3px;width:0;background:linear-gradient(90deg,var(--lime),var(--cyan),var(--pink));z-index:99}
+#cursor{position:fixed;width:14px;height:14px;border-radius:50%;background:var(--lime);z-index:100;pointer-events:none;mix-blend-mode:difference;transform:translate(-50%,-50%)}
+#glow{position:fixed;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(200,255,46,.12),transparent 70%);z-index:1;pointer-events:none;transform:translate(-50%,-50%)}
 .wrap{position:relative;z-index:2}
-/* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:16px 4vw;backdrop-filter:blur(18px);background:rgba(7,7,15,.55);border-bottom:1px solid var(--stroke)}
-.logo{font-family:'Unbounded';font-weight:900;font-size:1.3rem;letter-spacing:.08em}
-.logo span{color:var(--lime)}
-.nav-links{display:flex;gap:28px;align-items:center}
-.nav-links a{color:var(--mut);text-decoration:none;font-weight:500;font-size:.95rem;transition:.25s}
-.nav-links a:hover{color:#fff}
-.btn{display:inline-flex;align-items:center;gap:10px;padding:14px 28px;border-radius:100px;font-weight:700;text-decoration:none;transition:.3s cubic-bezier(.34,1.56,.64,1);border:0;cursor:pointer;font-size:1rem}
-.btn-lime{background:var(--lime);color:#0a0a0a;box-shadow:0 0 0 rgba(200,255,46,0)}
-.btn-lime:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 18px 50px rgba(200,255,46,.35)}
-.btn-ghost{background:transparent;color:#fff;border:1px solid var(--stroke)}
-.btn-ghost:hover{border-color:var(--lime);transform:translateY(-3px)}
-/* HERO */
+.logo{font-family:'Unbounded';font-weight:900;font-size:1.3rem;letter-spacing:.08em}.logo span{color:var(--lime)}
+.nav-links{display:flex;gap:28px;align-items:center}.nav-links a{color:var(--mut);text-decoration:none;font-weight:500;transition:.25s}.nav-links a:hover{color:#fff}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:15px 30px;border-radius:100px;font-weight:700;text-decoration:none;transition:transform .25s,box-shadow .25s;border:0;font-size:1rem;position:relative;overflow:hidden}
+.btn-lime{background:var(--lime);color:#0a0a0a}.btn-lime:hover{box-shadow:0 18px 50px rgba(200,255,46,.4)}
+.btn-lime::after{content:'';position:absolute;top:0;left:-80%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.7),transparent);transform:skewX(-20deg);animation:shine 3.5s infinite}
+@keyframes shine{0%{left:-80%}55%,100%{left:130%}}
+.btn-ghost{background:transparent;color:#fff;border:1px solid var(--stroke)}.btn-ghost:hover{border-color:var(--lime);box-shadow:0 12px 34px rgba(200,255,46,.15)}
 .hero{min-height:100vh;display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;padding:130px 5vw 60px;max-width:1400px;margin:0 auto}
-.badge{display:inline-flex;align-items:center;gap:10px;padding:8px 18px;border-radius:100px;border:1px solid rgba(200,255,46,.4);background:rgba(200,255,46,.08);font-size:.82rem;letter-spacing:.12em;text-transform:uppercase;color:var(--lime);margin-bottom:24px}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--lime);animation:blink 1.4s infinite}
-@keyframes blink{50%{opacity:.2}}
-h1{font-family:'Unbounded';font-weight:900;font-size:clamp(2.6rem,6vw,5.2rem);line-height:.98;letter-spacing:-.02em}
-h1 .stroke{color:transparent;-webkit-text-stroke:2px var(--cyan)}
-h1 .grad{background:linear-gradient(90deg,var(--lime),var(--cyan),var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200%;animation:gradShift 5s linear infinite}
-@keyframes gradShift{to{background-position:200%}}
-.sub{color:var(--mut);font-size:1.15rem;line-height:1.7;margin:24px 0 34px;max-width:520px}
-.sub b{color:#fff}
-.hero-cta{display:flex;gap:14px;flex-wrap:wrap}
-.stats{display:flex;gap:36px;margin-top:44px}
-.stat b{font-family:'Unbounded';font-size:1.7rem;display:block}
-.stat span{color:var(--mut);font-size:.85rem;letter-spacing:.08em;text-transform:uppercase}
-/* phones */
-.phones{position:relative;display:flex;justify-content:center;gap:24px;perspective:1200px}
-.phone{width:250px;height:520px;border-radius:44px;background:#11111f;border:1px solid rgba(255,255,255,.16);padding:12px;box-shadow:0 40px 100px rgba(0,0,0,.6);position:relative;overflow:hidden;transition:transform .5s}
-.phone:first-child{transform:rotateY(12deg) rotateZ(-4deg)}
-.phone:last-child{transform:rotateY(-12deg) rotateZ(4deg)}
-.phones:hover .phone:first-child{transform:rotateY(4deg) translateY(-10px)}
-.phones:hover .phone:last-child{transform:rotateY(-4deg) translateY(-10px)}
+.badge{display:inline-flex;align-items:center;gap:10px;padding:8px 18px;border-radius:100px;border:1px solid rgba(200,255,46,.4);background:rgba(200,255,46,.08);font-size:.8rem;letter-spacing:.14em;color:var(--lime);margin-bottom:24px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--lime);animation:blink 1.4s infinite}@keyframes blink{50%{opacity:.2}}
+h1{font-family:'Unbounded';font-weight:900;font-size:clamp(2.6rem,6vw,5.2rem);line-height:.98}
+h1 .ln{display:block;opacity:0;transform:translateY(60px) rotate(2deg);animation:rise .9s cubic-bezier(.2,.8,.2,1) forwards}
+h1 .ln:nth-child(2){animation-delay:.12s}h1 .ln:nth-child(3){animation-delay:.24s}
+@keyframes rise{to{opacity:1;transform:none}}
+.stroke{color:transparent;-webkit-text-stroke:2px var(--cyan)}
+.grad{background:linear-gradient(90deg,var(--lime),var(--cyan),var(--pink),var(--lime));-webkit-background-clip:text;background-clip:text;color:transparent;background-size:300%;animation:gradShift 6s linear infinite}
+@keyframes gradShift{to{background-position:300%}}
+.sub{color:var(--mut);font-size:1.15rem;line-height:1.7;margin:24px 0 34px;max-width:520px;opacity:0;animation:rise .9s .4s forwards}.sub b{color:#fff}
+.hero-cta{display:flex;gap:14px;flex-wrap:wrap;opacity:0;animation:rise .9s .55s forwards}
+.stats{display:flex;gap:36px;margin-top:44px;opacity:0;animation:rise .9s .7s forwards}
+.stat b{font-family:'Unbounded';font-size:1.7rem;display:block}.stat span{color:var(--mut);font-size:.82rem;letter-spacing:.08em;text-transform:uppercase}
+.phones{position:relative;display:flex;justify-content:center;gap:24px;perspective:1400px}
+.phone{width:250px;height:520px;border-radius:44px;background:#11111f;border:1px solid rgba(255,255,255,.16);padding:12px;box-shadow:0 40px 100px rgba(0,0,0,.6),0 0 60px rgba(62,230,255,.12);position:relative;overflow:hidden;transition:transform .2s ease-out;transform-style:preserve-3d}
 .screen{width:100%;height:100%;border-radius:34px;overflow:hidden;position:relative;background:#0a0a18}
 .screen-blixo{background:radial-gradient(circle at 50% 0%,#1c2b4a,#0a0a18 70%);padding:18px;display:flex;flex-direction:column}
 .b-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:3px;margin-top:14px}
-.b-cell{aspect-ratio:1;border-radius:4px;background:rgba(255,255,255,.07)}
-.b-cell.f1{background:linear-gradient(135deg,var(--cyan),#2b7fff);box-shadow:0 0 12px rgba(62,230,255,.6);animation:pop 2s infinite}
-.b-cell.f2{background:linear-gradient(135deg,var(--pink),#a21caf);box-shadow:0 0 12px rgba(255,78,205,.6)}
-.b-cell.f3{background:linear-gradient(135deg,var(--lime),#16a34a);box-shadow:0 0 12px rgba(200,255,46,.5);animation:pop 2s infinite .6s}
-@keyframes pop{50%{transform:scale(.82);opacity:.7}}
+.b-cell{aspect-ratio:1;border-radius:4px;background:rgba(255,255,255,.07);transition:.3s}
+.f1{background:linear-gradient(135deg,var(--cyan),#2b7fff)!important;box-shadow:0 0 12px rgba(62,230,255,.6)}
+.f2{background:linear-gradient(135deg,var(--pink),#a21caf)!important;box-shadow:0 0 12px rgba(255,78,205,.6)}
+.f3{background:linear-gradient(135deg,var(--lime),#16a34a)!important;box-shadow:0 0 12px rgba(200,255,46,.5)}
+.b-cell.clear{transform:scale(0) rotate(90deg);opacity:0}
 .b-pieces{display:flex;gap:10px;margin-top:auto;justify-content:center}
 .b-piece{width:62px;height:62px;border-radius:12px;display:grid;place-items:center;font-size:1.6rem;animation:float 3s ease-in-out infinite}
 @keyframes float{50%{transform:translateY(-10px) rotate(4deg)}}
 .screen-word{background:linear-gradient(180deg,#141428,#0a0a18);padding:20px;display:flex;flex-direction:column;align-items:center}
 .w-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:16px 0}
-.w-cell{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.08);display:grid;place-items:center;font-weight:700;font-size:1.1rem}
-.w-cell.hit{background:var(--lime);color:#000;box-shadow:0 0 18px rgba(200,255,46,.7);animation:pop 1.6s infinite}
+.w-cell{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.08);display:grid;place-items:center;font-weight:700;font-size:1.1rem;transition:.3s}
+.w-cell.hit{background:var(--lime);color:#000;box-shadow:0 0 18px rgba(200,255,46,.7)}
+.w-cell.typing{transform:scale(1.25) rotate(8deg);background:var(--pink);color:#fff}
 .wheel{width:150px;height:150px;border-radius:50%;border:2px solid rgba(255,255,255,.15);position:relative;margin-top:8px;background:radial-gradient(circle,rgba(255,78,205,.2),transparent 70%)}
-.wheel i{position:absolute;width:38px;height:38px;border-radius:50%;background:#1e1e38;border:1px solid var(--stroke);display:grid;place-items:center;font-style:normal;font-weight:700;animation:orbit 6s linear infinite}
+.wheel i{position:absolute;width:38px;height:38px;border-radius:50%;background:#1e1e38;border:1px solid var(--stroke);display:grid;place-items:center;font-style:normal;font-weight:700;animation:orbit 7s linear infinite}
 @keyframes orbit{from{transform:rotate(0) translateX(56px) rotate(0)}to{transform:rotate(360deg) translateX(56px) rotate(-360deg)}}
 .float-tag{position:absolute;padding:10px 18px;border-radius:14px;background:rgba(10,10,25,.85);border:1px solid var(--stroke);backdrop-filter:blur(10px);font-weight:700;font-size:.85rem;animation:float 4s ease-in-out infinite;box-shadow:0 14px 40px rgba(0,0,0,.5);z-index:3}
-.tag1{top:8%;left:-10px} .tag2{bottom:14%;right:-8px;animation-delay:1.2s}
-/* marquee */
+.tag1{top:8%;left:-10px}.tag2{bottom:14%;right:-8px;animation-delay:1.2s}
 .marquee{border-top:1px solid var(--stroke);border-bottom:1px solid var(--stroke);overflow:hidden;white-space:nowrap;padding:18px 0;background:rgba(255,255,255,.02)}
-.marquee div{display:inline-block;font-family:'Unbounded';font-weight:800;font-size:1.1rem;letter-spacing:.1em;animation:scroll 22s linear infinite}
-.marquee span{margin:0 28px;color:var(--mut)} .marquee em{color:var(--lime);font-style:normal}
+.marquee div{display:inline-block;font-family:'Unbounded';font-weight:800;font-size:1.1rem;animation:scroll 22s linear infinite}
+.marquee span{margin:0 28px;color:var(--mut)}.marquee em{color:var(--lime);font-style:normal}
 @keyframes scroll{to{transform:translateX(-50%)}}
-/* sections */
 section{max-width:1300px;margin:0 auto;padding:100px 5vw}
 .sec-label{color:var(--cyan);letter-spacing:.25em;text-transform:uppercase;font-size:.8rem;font-weight:700}
 h2{font-family:'Unbounded';font-weight:800;font-size:clamp(1.9rem,4vw,3.2rem);margin:14px 0 16px;line-height:1.05}
 .sec-sub{color:var(--mut);max-width:620px;line-height:1.7;font-size:1.05rem}
 .cards{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:54px}
-.card{background:var(--card);border:1px solid var(--stroke);border-radius:28px;padding:38px;position:relative;overflow:hidden;transition:.4s;opacity:0;transform:translateY(50px)}
+.card{background:rgba(255,255,255,.045);border:1px solid var(--stroke);border-radius:28px;padding:38px;position:relative;overflow:hidden;transition:transform .35s,border-color .35s,box-shadow .35s;opacity:0;transform:translateY(50px)}
 .card.visible{opacity:1;transform:none}
-.card:hover{transform:translateY(-8px);border-color:rgba(200,255,46,.4);box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.card:hover{transform:translateY(-10px) scale(1.01)!important;border-color:rgba(200,255,46,.45);box-shadow:0 30px 80px rgba(0,0,0,.5),0 0 50px rgba(200,255,46,.08)}
 .card::before{content:'';position:absolute;inset:0;background:radial-gradient(600px 200px at 20% 0%,rgba(200,255,46,.12),transparent),radial-gradient(500px 200px at 90% 100%,rgba(255,78,205,.12),transparent);pointer-events:none}
-.app-icon{width:84px;height:84px;border-radius:22px;display:grid;place-items:center;font-size:2.6rem;margin-bottom:20px}
+.app-icon{width:84px;height:84px;border-radius:22px;display:grid;place-items:center;font-size:2.6rem;margin-bottom:20px;animation:float 5s ease-in-out infinite}
 .icon-blixo{background:linear-gradient(135deg,#0ea5e9,#22d3ee 50%,#a5f3fc);box-shadow:0 14px 40px rgba(34,211,238,.4)}
 .icon-word{background:linear-gradient(135deg,#f59e0b,#ff4ecd);box-shadow:0 14px 40px rgba(255,78,205,.4)}
 .card h3{font-family:'Unbounded';font-size:1.5rem;margin-bottom:6px}
 .pkg{font-family:monospace;color:var(--mut);font-size:.8rem;margin-bottom:14px}
-.feats{list-style:none;margin:20px 0 28px;display:grid;gap:10px;color:#d9d6f2}
+.feats{list-style:none;margin:20px 0 28px;display:grid;gap:10px;color:#d9d6f2}.feats li{opacity:0;transform:translateX(-16px);transition:.5s}.card.visible .feats li{opacity:1;transform:none}
 .feats li::before{content:'✦ ';color:var(--lime)}
 .store-btn{display:inline-flex;align-items:center;gap:12px;background:#fff;color:#000;padding:12px 22px;border-radius:16px;text-decoration:none;font-weight:700;transition:.3s}
-.store-btn:hover{transform:scale(1.04);box-shadow:0 12px 40px rgba(255,255,255,.25)}
+.store-btn:hover{transform:scale(1.05) rotate(-1deg);box-shadow:0 12px 40px rgba(255,255,255,.25)}
 .store-btn small{display:block;font-weight:400;font-size:.7rem;letter-spacing:.08em}
-/* trust / ads */
 .trust{background:linear-gradient(180deg,transparent,rgba(200,255,46,.05),transparent);border-top:1px solid var(--stroke);border-bottom:1px solid var(--stroke);max-width:none}
 .trust-inner{max-width:1300px;margin:0 auto;padding:70px 5vw;display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
-.t-box{background:rgba(0,0,0,.35);border:1px solid var(--stroke);border-radius:20px;padding:26px}
-.t-box b{font-size:1.05rem} .t-box p{color:var(--mut);font-size:.9rem;margin-top:8px;line-height:1.6}
-/* footer */
+.t-box{background:rgba(0,0,0,.35);border:1px solid var(--stroke);border-radius:20px;padding:26px;transition:.3s}.t-box:hover{transform:translateY(-6px);border-color:var(--cyan)}
+.t-box b{font-size:1.05rem}.t-box p{color:var(--mut);font-size:.9rem;margin-top:8px;line-height:1.6}
 footer{border-top:1px solid var(--stroke);padding:60px 5vw 30px;max-width:1300px;margin:0 auto}
 .f-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:30px;margin-bottom:40px}
-.f-grid a{color:var(--mut);text-decoration:none;display:block;margin:10px 0}
-.f-grid a:hover{color:var(--lime)}
+.f-grid a{color:var(--mut);text-decoration:none;display:block;margin:10px 0}.f-grid a:hover{color:var(--lime)}
 .copy{color:var(--mut);font-size:.85rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid var(--stroke);padding-top:24px}
-.reveal{opacity:0;transform:translateY(40px);transition:.8s cubic-bezier(.2,.7,.2,1)}
-.reveal.visible{opacity:1;transform:none}
-@media(max-width:960px){
-  .hero{grid-template-columns:1fr;text-align:center;padding-top:120px}
-  .hero-cta,.stats{justify-content:center}.sub{margin-inline:auto}
-  .cards{grid-template-columns:1fr}.trust-inner{grid-template-columns:1fr 1fr}
-  .nav-links a:not(.btn){display:none}.phones{margin-top:20px}
-  .phone{width:200px;height:430px}
-}
-</style>
-</head>
+.reveal{opacity:0;transform:translateY(40px);transition:.8s cubic-bezier(.2,.7,.2,1)}.reveal.visible{opacity:1;transform:none}
+.burst{position:fixed;width:10px;height:10px;border-radius:50%;pointer-events:none;z-index:99;animation:burst 0.8s ease-out forwards}
+@keyframes burst{to{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
+@media(max-width:960px){.hero{grid-template-columns:1fr;text-align:center;padding-top:120px}.hero-cta,.stats{justify-content:center}.sub{margin-inline:auto}.cards{grid-template-columns:1fr}.trust-inner{grid-template-columns:1fr 1fr}.nav-links a:not(.btn){display:none}.phone{width:200px;height:430px}body{cursor:auto}#cursor,#glow{display:none}}
+</style></head>
 <body>
+<div id="progress"></div><div id="cursor"></div><div id="glow"></div>
 <canvas id="bg-canvas"></canvas>
+<div class="aurora a1"></div><div class="aurora a2"></div><div class="aurora a3"></div>
 <div class="noise"></div>
 <div class="wrap">
-<nav>
-  <div class="logo">PRO<span>YASS</span> 🎮</div>
-  <div class="nav-links">
-    <a href="#jeux">Games</a>
-    <a href="#studio">Studio</a>
-    <a href="#confidentialite">Privacy</a>
-    <a class="btn btn-lime" style="padding:10px 22px" href="#jeux">⬇ Download</a>
-  </div>
-</nav>
-
+<nav><div class="logo">PRO<span>YASS</span> 🎮</div>
+<div class="nav-links"><a href="#games">Games</a><a href="#studio">Studio</a><a href="#privacy">Privacy</a><a class="btn btn-lime magnetic" style="padding:10px 22px" href="#games">⬇ Download</a></div></nav>
 <header class="hero">
-  <div>
-    <div class="badge"><span class="dot"></span> INDIE MOBILE GAMES STUDIO</div>
-    <h1>DES PUZZLES<br><span class="stroke">QUI RENDENT</span><br><span class="grad">ACCRO.</span></h1>
-    <p class="sub">We are <b>PROYASS</b>. We craft simple, beautiful, satisfying mobile puzzle games. <b>BLIXO</b> for block lovers, <b>World Puzzle</b> for word lovers. 100% offline, 100% fun.</p>
-    <div class="hero-cta">
-      <a class="btn btn-lime" href="https://play.google.com/store/apps/details?id=com.proyass.blixo">▶ Play BLIXO</a>
-      <a class="btn btn-ghost" href="https://play.google.com/store/apps/details?id=com.proyass.worldpuzzle">🔤 World Puzzle</a>
-    </div>
-    <div class="stats">
-      <div class="stat"><b>2</b><span>jeux live</span></div>
-      <div class="stat"><b>3+</b><span>rating tout public</span></div>
-      <div class="stat"><b>100%</b><span>offline</span></div>
-    </div>
-  </div>
-  <div class="phones">
-    <div class="float-tag tag1">🧱 Combo x4 !</div>
-    <div class="phone"><div class="screen screen-blixo">
-      <div style="display:flex;justify-content:space-between;align-items:center"><b style="font-family:Unbounded">BLIXO</b><span style="background:#c8ff2e;color:#000;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700">★ 12 480</span></div>
-      <div class="b-grid" id="bgrid"></div>
-      <div class="b-pieces"><div class="b-piece" style="background:linear-gradient(135deg,#3ee6ff,#2563eb)">🟦</div><div class="b-piece" style="background:linear-gradient(135deg,#ff4ecd,#7c3aed);animation-delay:.5s">🟪</div><div class="b-piece" style="background:linear-gradient(135deg,#c8ff2e,#16a34a);animation-delay:1s">🟩</div></div>
-    </div></div>
-    <div class="phone"><div class="screen screen-word">
-      <b style="font-family:Unbounded;font-size:.9rem">WORLD 🌍 PUZZLE</b>
-      <div class="w-grid" id="wgrid"></div>
-      <div class="wheel" id="wheel"></div>
-      <p style="color:#a7a3c7;font-size:.75rem;margin-top:12px">FR / EN • Daily Crossword</p>
-    </div></div>
-    <div class="float-tag tag2">⭐ 5.0 — "10/10"</div>
-  </div>
-</header>
-
-<div class="marquee"><div id="mq">BLIXO <em>✦</em> <span>BLOCK PUZZLE</span> WORLD PUZZLE <em>✦</em> <span>DAILY CROSSWORD</span> 100% OFFLINE <em>✦</em> <span>NO TIMER</span> FR + EN <em>✦</em> <span>COMBOS</span>&nbsp;</div></div>
-
-<section id="jeux">
-  <div class="sec-label">// 01 — Our games</div>
-  <h2>Two apps.<br>Zero boredom.</h2>
-  <p class="sec-sub">Free on Google Play. Supported by AdMob ads to stay free forever.</p>
-  <div class="cards">
-    <div class="card">
-      <div class="app-icon icon-blixo">🧱</div>
-      <h3>BLIXO: Block Puzzle</h3>
-      <div class="pkg">com.proyass.blixo • Puzzle • Offline</div>
-      <p style="color:#d9d6f2;line-height:1.7">Drag, drop, blast, repeat. Drop blocks on an 8×8 board, clear lines, chain combos. No timers, no pressure — pure satisfaction.</p>
-      <ul class="feats"><li>8×8 board + combos</li><li>Multiple visual themes</li><li>Leaderboard + private groups</li><li>Haptics + premium animations</li></ul>
-      <a class="store-btn" href="https://play.google.com/store/apps/details?id=com.proyass.blixo">▶ <span><small>GET IT ON</small>Google Play</span></a>
-    </div>
-    <div class="card">
-      <div class="app-icon icon-word">🔤</div>
-      <h3>World Puzzle: Daily Crossword</h3>
-      <div class="pkg">com.proyass.worldpuzzle • Word • FR/EN</div>
-      <p style="color:#d9d6f2;line-height:1.7">Connect letters, fill the grid, discover bonus words. Hundreds of levels across beautiful worlds, in English & French.</p>
-      <ul class="feats"><li>Hundreds of levels</li><li>English + French</li><li>Bonus words + coins d'or</li><li>Hints & power-ups</li></ul>
-      <a class="store-btn" href="https://play.google.com/store/apps/details?id=com.proyass.worldpuzzle">▶ <span><small>GET IT ON</small>Google Play</span></a>
-    </div>
-  </div>
-</section>
-
-<div class="trust"><div class="trust-inner reveal">
-  <div class="t-box"><b>🛡️ 100% Safe & Family</b><p>Rated 3+. Encrypted data, deletion on request.</p></div>
-  <div class="t-box"><b>📴 Offline First</b><p>Joue dans l'avion, le bus, sans wifi.</p></div>
-  <div class="t-box"><b>📊 Mesure Ads</b><p>TikTok SDK + AppsFlyer + Firebase ready for ad optimization.</p></div>
-  <div class="t-box"><b>✉️ Contact</b><p>proyass.apps@gmail.com<br>Support via fiche Play Store.</p></div>
-</div></div>
-
-<section id="studio">
-  <div class="sec-label">// 02 — The studio</div>
-  <h2>PROYASS, made with ❤️ for puzzle lovers.</h2>
-  <p class="sec-sub">Independent studio crafting polished puzzle games. Next up: <b>Level Demon</b> 👹. Follow us on TikTok for behind-the-scenes.</p>
-</section>
-
-<section id="confidentialite" style="padding-top:0">
-  <div class="sec-label">// 03 — Privacy</div>
-  <h2>Privacy, clear & simple.</h2>
-  <p class="sec-sub">Our apps show ads via <b>Google AdMob</b>. See <a href="https://policies.google.com/privacy" style="color:#c8ff2e">règles de confidentialité Google</a>. Data collected: device info, app activity. Encrypted in transit. Deletion: email <b>proyass.apps@gmail.com</b>.</p>
-  <div style="display:flex;gap:12px;margin-top:24px;flex-wrap:wrap">
-    <a class="btn btn-ghost" href="https://play.google.com/store/apps/details?id=com.proyass.blixo">Privacy — BLIXO</a>
-    <a class="btn btn-ghost" href="https://play.google.com/store/apps/details?id=com.proyass.worldpuzzle">Privacy — World Puzzle</a>
-  </div>
-</section>
-
-<footer>
-  <div class="f-grid">
-    <div><div class="logo">PRO<span>YASS</span></div><p style="color:#a7a3c7;margin-top:12px;line-height:1.6">Mobile Games Studio.<br>Fun puzzles for Android.</p></div>
-    <div><b>Games</b><a href="https://play.google.com/store/apps/details?id=com.proyass.blixo">BLIXO</a><a href="https://play.google.com/store/apps/details?id=com.proyass.worldpuzzle">World Puzzle</a></div>
-    <div><b>Legal</b><a href="#confidentialite">Privacy Policy</a><a href="https://yaissaoui.github.io/app-ads.txt">app-ads.txt</a><a href="mailto:proyass.apps@gmail.com">Contact</a></div>
-  </div>
-  <div class="copy"><span>© PROYASS 2026 — PROYASS Studio</span><span>app-ads.txt ✓ • TikTok Ads Ready ✓</span></div>
-</footer>
+<div>
+<div class="badge"><span class="dot"></span> INDIE MOBILE GAMES STUDIO</div>
+<h1><span class="ln">PUZZLES</span><span class="ln stroke">THAT GET YOU</span><span class="ln grad">HOOKED.</span></h1>
+<p class="sub">We are <b>PROYASS</b>. We craft simple, beautiful, satisfying mobile puzzle games. <b>BLIXO</b> for block lovers, <b>World Puzzle</b> for word lovers. Free • Offline • No timers.</p>
+<div class="hero-cta"><a class="btn btn-lime magnetic" href="https://play.google.com/store/apps/details?id=com.proyass.blixo">▶ Play BLIXO</a><a class="btn btn-ghost magnetic" href="https://play.google.com/store/apps/details?id=com.proyass.worldpuzzle">🔤 World Puzzle</a></div>
+<div class="stats"><div class="stat"><b><span class="count" data-n="2">0</span></b><span>live games</span></div><div class="stat"><b><span class="count" data-n="500">0</span>+</b><span>levels</span></div><div class="stat"><b><span class="count" data-n="100">0</span>%</b><span>offline</span></div></div>
 </div>
-
+<div class="phones" id="phones">
+<div class="float-tag tag1">🧱 Combo x4!</div>
+<div class="phone" data-tilt><div class="screen screen-blixo">
+<div style="display:flex;justify-content:space-between;align-items:center"><b style="font-family:Unbounded">BLIXO</b><span style="background:#c8ff2e;color:#000;padding:4px 12px;border-radius:20px;font-size:.75rem;font-weight:700">★ <span id="score">12 480</span></span></div>
+<div class="b-grid" id="bgrid"></div>
+<div class="b-pieces"><div class="b-piece" style="background:linear-gradient(135deg,#3ee6ff,#2563eb)">🟦</div><div class="b-piece" style="background:linear-gradient(135deg,#ff4ecd,#7c3aed);animation-delay:.5s">🟪</div><div class="b-piece" style="background:linear-gradient(135deg,#c8ff2e,#16a34a);animation-delay:1s">🟩</div></div>
+</div></div>
+<div class="phone" data-tilt><div class="screen screen-word">
+<b style="font-family:Unbounded;font-size:.9rem">WORLD 🌍 PUZZLE</b>
+<div class="w-grid" id="wgrid"></div><div class="wheel" id="wheel"></div>
+<p style="color:#a7a3c7;font-size:.75rem;margin-top:12px">EN / FR • Daily Crossword</p>
+</div></div>
+<div class="float-tag tag2">⭐ 5.0 — "10/10"</div>
+</div></header>
+<div class="marquee"><div id="mq">BLIXO <em>✦</em> <span>BLOCK PUZZLE</span> WORLD PUZZLE <em>✦</em> <span>DAILY CROSSWORD</span> 100% OFFLINE <em>✦</em> <span>NO TIMERS</span> EN + FR <em>✦</em> <span>COMBOS</span>&nbsp;</div></div>
+<section id="games"><div class="sec-label">// 01 — Our games</div><h2>Two apps.<br>Zero boredom.</h2>
+<p class="sec-sub">Free on Google Play. Supported by AdMob ads to stay free forever.</p>
+<div class="cards">
+<div class="card"><div class="app-icon icon-blixo">🧱</div><h3>BLIXO: Block Puzzle</h3><div class="pkg">com.proyass.blixo • Puzzle • Offline</div>
+<p style="color:#d9d6f2;line-height:1.7">Drag, drop, blast, repeat. Drop blocks on an 8×8 board, clear lines, chain combos. No timers, no pressure — pure satisfaction.</p>
+<ul class="feats"><li>8×8 board + combo system</li><li>Multiple visual themes</li><li>Leaderboards + private groups</li><li>Haptics + premium animations</li></ul>
+<a class="store-btn magnetic" href="https://play.google.com/store/apps/details?id=com.proyass.blixo">▶ <span><small>GET IT ON</small>Google Play</span></a></div>
+<div class="card"><div class="app-icon icon-word">🔤</div><h3>World Puzzle: Daily Crossword</h3><div class="pkg">com.proyass.worldpuzzle • Word • EN/FR</div>
+<p style="color:#d9d6f2;line-height:1.7">Connect letters, fill the grid, discover bonus words. Hundreds of levels across beautiful worlds, in English & French.</p>
+<ul class="feats"><li>Hundreds of handcrafted levels</li><li>English + French vocab</li><li>Bonus words + gold coins</li><li>Hints & power-ups</li></ul>
+<a class="store-btn magnetic" href="https://play.google.com/store/apps/details?id=com.proyass.worldpuzzle">▶ <span><small>GET IT ON</small>Google Play</span></a></div>
+</div></section>
+<div class="trust"><div class="trust-inner reveal">
+<div class="t-box"><b>🛡️ Safe & Family Friendly</b><p>Rated 3+. Encrypted data, deletion on request.</p></div>
+<div class="t-box"><b>📴 Offline First</b><p>Play on a plane, on the bus — no wifi needed.</p></div>
+<div class="t-box"><b>📊 Ad Optimized</b><p>Integrated measurement SDKs for campaign optimization.</p></div>
+<div class="t-box"><b>✉️ Support</b><p>Help directly via the Play Store listing contact.</p></div>
+</div></div>
+<section id="studio"><div class="sec-label">// 02 — The studio</div><h2>PROYASS, made with ❤️ for puzzle lovers.</h2>
+<p class="sec-sub">An independent studio crafting polished puzzle games. Next up: <b>Level Demon</b> 👹. Follow our journey on TikTok for behind-the-scenes.</p></section>
+<section id="privacy" style="padding-top:0"><div class="sec-label">// 03 — Privacy</div><h2>Privacy, clear & simple.</h2>
+<p class="sec-sub">Our apps show ads via <b>Google AdMob</b>. See <a href="https://policies.google.com/privacy" style="color:#c8ff2e">Google Privacy Policy</a>. Data collected: device info, app activity. Encrypted in transit. Deletion: contact us via the Play Store listing.</p>
+<div style="display:flex;gap:12px;margin-top:24px;flex-wrap:wrap"><a class="btn btn-ghost magnetic" href="/blixo/privacy.html">Privacy — BLIXO</a><a class="btn btn-ghost magnetic" href="/worldpuzzle/privacy.html">Privacy — World Puzzle</a></div></section>
+<footer><div class="f-grid">
+<div><div class="logo">PRO<span>YASS</span></div><p style="color:#a7a3c7;margin-top:12px;line-height:1.6">Mobile Games Studio.<br>Fun puzzles for Android.</p></div>
+<div><b>Games</b><a href="https://play.google.com/store/apps/details?id=com.proyass.blixo">BLIXO</a><a href="https://play.google.com/store/apps/details?id=com.proyass.worldpuzzle">World Puzzle</a></div>
+<div><b>Legal</b><a href="#privacy">Privacy Policy</a><a href="/app-ads.txt">app-ads.txt</a></div>
+</div><div class="copy"><span>© PROYASS 2026 — All rights reserved</span><span>app-ads.txt ✓ • Ads Ready ✓</span></div></footer>
+</div>
 <script>
-// BG particles
-const c=document.getElementById('bg-canvas'),x=c.getContext('2d');let W,H,P=[];
-function rs(){W=c.width=innerWidth;H=c.height=innerHeight}rs();addEventListener('resize',rs);
-for(let i=0;i<90;i++)P.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*2.5+.5,vx:(Math.random()-.5)*.4,vy:(Math.random()-.5)*.4,col:['#c8ff2e','#3ee6ff','#ff4ecd'][i%3],a:Math.random()*.6+.2});
-(function loop(){x.clearRect(0,0,W,H);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;x.globalAlpha=p.a;x.fillStyle=p.col;x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fill()});x.globalAlpha=1;requestAnimationFrame(loop)})();
-// blixo grid
-const bg=document.getElementById('bgrid');
-for(let i=0;i<64;i++){const d=document.createElement('div');d.className='b-cell';const r=Math.random();if(r>.86)d.classList.add('f1');else if(r>.78)d.classList.add('f2');else if(r>.72)d.classList.add('f3');bg.appendChild(d)}
-setInterval(()=>{const cells=bg.children;for(let k=0;k<3;k++){const d=cells[Math.floor(Math.random()*64)];d.className='b-cell '+['f1','f2','f3'][Math.floor(Math.random()*3)]}},1200);
-// word grid
-const words=['W','O','R','L','D'];const wg=document.getElementById('wgrid');
-'WORLDPZZLEUAMOTBRAINFUNXD'.split('').slice(0,25).forEach((ch,i)=>{const d=document.createElement('div');d.className='w-cell'+(i<5?' hit':'');d.textContent=i<5?words[i]:ch;wg.appendChild(d)});
-// wheel letters
+// 1. particle network canvas
+const c=document.getElementById('bg-canvas'),x=c.getContext('2d');let W,H;function rs(){W=c.width=innerWidth;H=c.height=innerHeight}rs();addEventListener('resize',rs);
+let P=[];for(let i=0;i<80;i++)P.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,r:Math.random()*2.2+.6,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,col:['#c8ff2e','#3ee6ff','#ff4ecd'][i%3]});
+let mx=-999,my=-999;addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+(function loop(){x.clearRect(0,0,W,H);P.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+const d=Math.hypot(p.x-mx,p.y-my);if(d<140){p.x+=(p.x-mx)/d*1.4;p.y+=(p.y-my)/d*1.4}
+x.globalAlpha=.7;x.fillStyle=p.col;x.beginPath();x.arc(p.x,p.y,p.r,0,7);x.fill()});
+x.globalAlpha=.12;x.strokeStyle='#c8ff2e';for(let i=0;i<P.length;i++)for(let j=i+1;j<P.length;j++){const a=P[i],b=P[j];if(Math.hypot(a.x-b.x,a.y-b.y)<120){x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}
+x.globalAlpha=1;requestAnimationFrame(loop)})();
+// 2. custom cursor + glow + 3. magnetic buttons
+const cur=document.getElementById('cursor'),glow=document.getElementById('glow');
+addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';glow.style.left=e.clientX+'px';glow.style.top=e.clientY+'px'});
+document.querySelectorAll('.magnetic').forEach(b=>{b.addEventListener('mousemove',e=>{const r=b.getBoundingClientRect();b.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.18}px,${(e.clientY-r.top-r.height/2)*.28}px)`});b.addEventListener('mouseleave',()=>b.style.transform='')});
+// 4. 3D tilt phones
+document.querySelectorAll('[data-tilt]').forEach(el=>{el.addEventListener('mousemove',e=>{const r=el.getBoundingClientRect();const rx=((e.clientY-r.top)/r.height-.5)*-22,ry=((e.clientX-r.left)/r.width-.5)*22;el.style.transform=`rotateX(${rx}deg) rotateY(${ry}deg) translateZ(12px)`});el.addEventListener('mouseleave',()=>el.style.transform='')});
+// subtle parallax on hero
+addEventListener('scroll',()=>{const y=scrollY;document.getElementById('phones').style.transform=`translateY(${y*.06}px)`;document.getElementById('progress').style.width=(y/(document.body.scrollHeight-innerHeight)*100)+'%'},{passive:true});
+// 5. blixo grid with line blast
+const bg=document.getElementById('bgrid'),cells=[];
+for(let i=0;i<64;i++){const d=document.createElement('div');d.className='b-cell';bg.appendChild(d);cells.push(d)}
+function randFill(){cells.forEach(d=>{d.classList.remove('clear');const r=Math.random();d.className='b-cell'+(r>.87?' f1':r>.8?' f2':r>.74?' f3':'')})}
+randFill();
+let score=12480;const sEl=document.getElementById('score');
+setInterval(()=>{const row=Math.floor(Math.random()*8);for(let k=0;k<8;k++){cells[row*8+k].classList.add('clear')}score+=120+Math.floor(Math.random()*400);sEl.textContent=score.toLocaleString('en-US').replace(/,/g,' ');setTimeout(randFill,450)},2600);
+// 6. word typing animation
+const wg=document.getElementById('wgrid');const letters='WORLDPZZLEUAMOTBRAINFUNXD'.split('').slice(0,25);const wcells=[];
+letters.forEach((ch,i)=>{const d=document.createElement('div');d.className='w-cell'+(i<5?' hit':'');d.textContent=i<5?'WORLD'[i]:ch;wg.appendChild(d);wcells.push(d)});
+let wi=5;setInterval(()=>{wcells.forEach(d=>d.classList.remove('typing'));for(let k=0;k<3;k++){wcells[(wi+k)%25].classList.add('typing')}wi=(wi+1)%25},700);
+// 7. wheel
 const wl=['W','O','R','D','L','D'];const wh=document.getElementById('wheel');
-wl.forEach((L,i)=>{const e=document.createElement('i');e.textContent=L;e.style.left='calc(50% - 19px)';e.style.top='calc(50% - 19px)';e.style.animationDelay=(i*.25)+'s';wh.appendChild(e)});
-// marquee dup
+wl.forEach(L=>{const e=document.createElement('i');e.textContent=L;e.style.left='calc(50% - 19px)';e.style.top='calc(50% - 19px)';e.style.animationDelay=(wl.indexOf(L)*.3)+'s';wh.appendChild(e)});
+// 8. marquee + 9. reveal + counters
 const mq=document.getElementById('mq');mq.innerHTML+=mq.innerHTML;
-// reveal
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')}),{threshold:.12});
+const io=new IntersectionObserver(es=>es.forEach((e,i)=>{if(e.isIntersecting){e.target.classList.add('visible');e.target.querySelectorAll('.feats li').forEach((li,j)=>li.style.transitionDelay=(j*.1)+'s')}}),{threshold:.12});
 document.querySelectorAll('.reveal,.card').forEach(el=>io.observe(el));
-</script>
-</body>
-</html>
+const cio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const el=e.target,n=+el.dataset.n;let v=0;const t=setInterval(()=>{v+=Math.ceil(n/40);if(v>=n){v=n;clearInterval(t)}el.textContent=v},40);cio.unobserve(el)}}),{threshold:.5});
+document.querySelectorAll('.count').forEach(el=>cio.observe(el));
+// 10. click confetti burst
+addEventListener('click',e=>{for(let i=0;i<10;i++){const s=document.createElement('span');s.className='burst';s.style.left=e.clientX+'px';s.style.top=e.clientY+'px';s.style.background=['#c8ff2e','#3ee6ff','#ff4ecd'][i%3];s.style.setProperty('--dx',(Math.random()-.5)*220+'px');s.style.setProperty('--dy',(Math.random()-.5)*220+'px');document.body.appendChild(s);setTimeout(()=>s.remove(),850)}});
+</script></body></html>
